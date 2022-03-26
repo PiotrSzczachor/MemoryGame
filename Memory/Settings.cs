@@ -6,14 +6,60 @@ using System.Threading.Tasks;
 
 namespace Memory
 {
-    internal class Settings
+    public sealed class Settings
     {
-        int initial_time = 0;
-        int cards_open_time;
+        int initialTime;
+        int cardsOpenTime;
+        int numberOfCards;
 
-        void set_initial_time()
-        {
-            initial_time = 0;
+        private Settings() {
+            initialTime = 120;
+            cardsOpenTime = 10;
+            numberOfCards = 48;
         }
+
+        private static Settings instance;
+
+        public static Settings getInstance()
+        {
+            if (instance == null)
+            {
+                instance = new Settings();
+            }
+            return instance;
+        }
+
+        public void setInitialTime(int time)
+        {
+            initialTime = time;
+        }
+
+        public void setCardsOpenTime(int time)
+        {
+            cardsOpenTime = time;
+        }
+
+        public void setNumberOfCards(int number)
+        {
+            numberOfCards = number;
+        }
+
+
+        public int getInitialTime()
+        {
+            return initialTime;
+        }
+
+        public int getCardsOpenTime()
+        {
+            return cardsOpenTime;
+        }
+
+        public int getNumberOfCards()
+        {
+            return numberOfCards;
+        }
+
+
     }
 }

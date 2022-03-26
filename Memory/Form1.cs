@@ -33,7 +33,23 @@ namespace Memory
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (textBox1.Text != "")
+            {
+                Player player = Player.getInstance();
+                player.setUsername(textBox1.Text);
+                
+                this.Hide();
+                new Form3().ShowDialog();
+                this.Close();
+            } else
+            {
+                MessageBox.Show("Username text box can not be empty.",
+                                "Add username",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
+            }
             
         }
+
     }
 }

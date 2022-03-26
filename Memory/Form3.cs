@@ -15,16 +15,27 @@ namespace Memory
         public Form3()
         {
             InitializeComponent();
-            Label label1 = new Label()
+            
+            if(Settings.getInstance().getCardsOpenTime() == 10)
             {
-                Text = "&First Name",
-                Location = new Point(10, 10),
-                TabIndex = 10
-            };
-            Controls.Add(label1);
+                label1.Text = "Easy";
+            }
+            if (Settings.getInstance().getCardsOpenTime() == 6)
+            {
+                label1.Text = "Medium";
+            }
+            if (Settings.getInstance().getCardsOpenTime() == 2)
+            {
+                label1.Text = "Hard";
+            }
         }
 
         private void Form3_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
         {
 
         }
