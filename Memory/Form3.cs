@@ -21,77 +21,76 @@ namespace Memory
         public Form3()
         {
             InitializeComponent();
-            
+
             int iterations = Settings.getInstance().getNumberOfCards();
-            int x = 10;
-            int y = 10;
-            /*for (int i=1; i<=iterations; i++)
+ 
+            TableLayoutPanel table = null;
+
+            getCardsAndFilesNames();
+
+            for (int i=0; i<iterations; i++)
             {
                 if (iterations == 48)
                 {
+                    table = MakeTableLayoutPanel(4, 12);
+                    //table.Padding = GetCorrectionPadding(table, 4);
                     PictureBox picture = new PictureBox
                     {
-                        Name = "card",
-                        Size = new Size(100,50),
-                        Location = new Point(x, y),
-                        Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\card.png"),
-                        SizeMode = PictureBoxSizeMode.CenterImage
+                        Name = CardsNames[i],
+                        Size = new Size(112,175),
+                        Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\"+FilesNames[i]),
+                        SizeMode = PictureBoxSizeMode.StretchImage
                     };
                     Cardslist.Add(picture);
-                    x+=55;
-                    if(i % 12 == 0)
-                    {
-                        Console.WriteLine(i.ToString());
-                        y += 105;
-                        x = 10;
-                    }
-                }
-                if (iterations == 96)
-                {
-                    PictureBox picture = new PictureBox
-                    {
-                        Name = "card",
-                        Size = new Size(100, 50),
-                        Location = new Point(x, y),
-                        Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\card.png"),
-                        SizeMode = PictureBoxSizeMode.CenterImage
-                    };
-                    Cardslist.Add(picture);
-                    x += 55;
-                    if (i % 12 == 0)
-                    {
-                        Console.WriteLine(i.ToString());
-                        y += 105;
-                        x = 10;
-                    }
-
-                }
-                if (iterations == 96)
-                {
-                    PictureBox picture = new PictureBox
-                    {
-                        Name = "card",
-                        Size = new Size(100, 50),
-                        Location = new Point(x, y),
-                        Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\card.png"),
-                        SizeMode = PictureBoxSizeMode.CenterImage
-                    };
-                    Cardslist.Add(picture);
-                    x += 55;
-                    if (i % 12 == 0)
-                    {
-                        Console.WriteLine(i.ToString());
-                        y += 105;
-                        x = 10;
-                    }
-
                 }
             }
-            drawCards();*/
-            getCardsAndFilesNames();
+            
+            foreach(PictureBox p in Cardslist)
+            {
+                Console.WriteLine(p.Name);
+                table.Controls.Add(p);
+            }
+            
+
         }
 
-        
+        private TableLayoutPanel MakeTableLayoutPanel(int rows, int cols)
+        {
+            TableLayoutPanel tableLayoutPanel = new TableLayoutPanel();
+            tableLayoutPanel.RowCount = rows;
+            tableLayoutPanel.BackColor = Color.Transparent;
+            tableLayoutPanel.ColumnCount = cols;
+            tableLayoutPanel.AutoSize = true;
+            tableLayoutPanel.Location = new Point(70, 70);
+
+            tableLayoutPanel.RowStyles.Clear();
+            tableLayoutPanel.ColumnStyles.Clear();
+
+            Controls.Add(tableLayoutPanel);
+            
+            return tableLayoutPanel;
+        }
+
+
+        private Padding GetCorrectionPadding(TableLayoutPanel TLP, int minimumPadding)
+        {
+            int minPad = minimumPadding;
+            Rectangle netRect = TLP.ClientRectangle;
+            netRect.Inflate(-minPad, -minPad);
+
+            int w = netRect.Width / TLP.ColumnCount;
+            int h = netRect.Height / TLP.RowCount;
+
+            int deltaX = (netRect.Width - w * TLP.ColumnCount) / 2;
+            int deltaY = (netRect.Height - h * TLP.RowCount) / 2;
+
+            int OddX = (netRect.Width - w * TLP.ColumnCount) % 2;
+            int OddY = (netRect.Height - h * TLP.RowCount) % 2;
+
+            return new Padding(minPad + deltaX, minPad + deltaY,
+                               minPad + deltaX + OddX, minPad + deltaY + OddY);
+        }
+
         private void getCardsAndFilesNames()
         {
             DirectoryInfo dir1 = new DirectoryInfo(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\");

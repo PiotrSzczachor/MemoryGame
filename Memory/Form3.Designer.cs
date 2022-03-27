@@ -71,21 +71,21 @@
             // sToolStripMenuItem
             // 
             this.sToolStripMenuItem.Name = "sToolStripMenuItem";
-            this.sToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.sToolStripMenuItem.Size = new System.Drawing.Size(109, 22);
             this.sToolStripMenuItem.Text = "10 sec.";
             this.sToolStripMenuItem.Click += new System.EventHandler(this.sToolStripMenuItem_Click);
             // 
             // secToolStripMenuItem
             // 
             this.secToolStripMenuItem.Name = "secToolStripMenuItem";
-            this.secToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.secToolStripMenuItem.Size = new System.Drawing.Size(109, 22);
             this.secToolStripMenuItem.Text = "6 sec.";
             this.secToolStripMenuItem.Click += new System.EventHandler(this.secToolStripMenuItem_Click);
             // 
             // secToolStripMenuItem1
             // 
             this.secToolStripMenuItem1.Name = "secToolStripMenuItem1";
-            this.secToolStripMenuItem1.Size = new System.Drawing.Size(180, 22);
+            this.secToolStripMenuItem1.Size = new System.Drawing.Size(109, 22);
             this.secToolStripMenuItem1.Text = "2 sec.";
             this.secToolStripMenuItem1.Click += new System.EventHandler(this.secToolStripMenuItem1_Click);
             // 
