@@ -12,21 +12,85 @@ namespace Memory
 {
     public partial class Form3 : Form
     {
+
+        List<PictureBox> Cardslist = new List<PictureBox>();
         public Form3()
         {
             InitializeComponent();
             
-            if(Settings.getInstance().getCardsOpenTime() == 10)
+            int iterations = Settings.getInstance().getNumberOfCards();
+            int x = 10;
+            int y = 10;
+            for (int i=1; i<=iterations; i++)
             {
-                label1.Text = "Easy";
+                if (iterations == 48)
+                {
+                    PictureBox picture = new PictureBox
+                    {
+                        Name = "card",
+                        Size = new Size(100,50),
+                        Location = new Point(x, y),
+                        Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\card.png"),
+                        SizeMode = PictureBoxSizeMode.CenterImage
+                    };
+                    Cardslist.Add(picture);
+                    x+=55;
+                    if(i % 12 == 0)
+                    {
+                        Console.WriteLine(i.ToString());
+                        y += 105;
+                        x = 10;
+                    }
+                }
+                if (iterations == 96)
+                {
+                    PictureBox picture = new PictureBox
+                    {
+                        Name = "card",
+                        Size = new Size(100, 50),
+                        Location = new Point(x, y),
+                        Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\card.png"),
+                        SizeMode = PictureBoxSizeMode.CenterImage
+                    };
+                    Cardslist.Add(picture);
+                    x += 55;
+                    if (i % 12 == 0)
+                    {
+                        Console.WriteLine(i.ToString());
+                        y += 105;
+                        x = 10;
+                    }
+
+                }
+                if (iterations == 96)
+                {
+                    PictureBox picture = new PictureBox
+                    {
+                        Name = "card",
+                        Size = new Size(100, 50),
+                        Location = new Point(x, y),
+                        Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\card.png"),
+                        SizeMode = PictureBoxSizeMode.CenterImage
+                    };
+                    Cardslist.Add(picture);
+                    x += 55;
+                    if (i % 12 == 0)
+                    {
+                        Console.WriteLine(i.ToString());
+                        y += 105;
+                        x = 10;
+                    }
+
+                }
             }
-            if (Settings.getInstance().getCardsOpenTime() == 6)
+            DrawCards();
+        }
+
+        private void DrawCards()
+        {
+            foreach (PictureBox picture in Cardslist)
             {
-                label1.Text = "Medium";
-            }
-            if (Settings.getInstance().getCardsOpenTime() == 2)
-            {
-                label1.Text = "Hard";
+                Controls.Add(picture);
             }
         }
 
