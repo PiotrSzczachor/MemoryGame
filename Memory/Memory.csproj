@@ -100,8 +100,70 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Content Include="Cards\card.png" />
+    <Content Include="Background\background.png" />
+    <Content Include="Cards\bale.png" />
+    <Content Include="Cards\balotelli.png" />
+    <Content Include="Cards\benzema.png" />
+    <Content Include="Cards\blaszczykowski.png" />
+    <Content Include="Cards\bruyne.png" />
+    <Content Include="Cards\buksa.png" />
+    <Content Include="Cards\casemiro.png" />
+    <Content Include="Cards\cash.png" />
+    <Content Include="Cards\chiellini.png" />
+    <Content Include="Cards\chiesa.png" />
+    <Content Include="Cards\coutinho.png" />
+    <Content Include="Cards\dembele.png" />
+    <Content Include="Cards\depay.png" />
+    <Content Include="Cards\donnaruma.png" />
+    <Content Include="Cards\eriksen.png" />
+    <Content Include="Cards\glik.png" />
+    <Content Include="Cards\gomez.png" />
+    <Content Include="Cards\grealish.png" />
+    <Content Include="Cards\griezmann.png" />
+    <Content Include="Cards\haaland.png" />
+    <Content Include="Cards\hazard.png" />
+    <Content Include="Cards\hernandes.png" />
+    <Content Include="Cards\ibrahimovic.png" />
+    <Content Include="Cards\immobile.png" />
+    <Content Include="Cards\jorginho.png" />
+    <Content Include="Cards\jozwiak.png" />
+    <Content Include="Cards\kane.png" />
+    <Content Include="Cards\kante.png" />
+    <Content Include="Cards\kroos.png" />
+    <Content Include="Cards\lewandowski.png" />
+    <Content Include="Cards\lukaku.png" />
+    <Content Include="Cards\maguire.png" />
+    <Content Include="Cards\maria.png" />
+    <Content Include="Cards\mbappe.png" />
+    <Content Include="Cards\messi.png" />
+    <Content Include="Cards\milik.png" />
+    <Content Include="Cards\moder.png" />
+    <Content Include="Cards\muller.png" />
+    <Content Include="Cards\nani.png" />
+    <Content Include="Cards\neuer.png" />
+    <Content Include="Cards\neymar.png" />
+    <Content Include="Cards\pedro.png" />
+    <Content Include="Cards\piatek.png" />
+    <Content Include="Cards\podolski.png" />
+    <Content Include="Cards\puchacz.png" />
+    <Content Include="Cards\ramos.png" />
+    <Content Include="Cards\rashford.png" />
+    <Content Include="Cards\reus.png" />
+    <Content Include="Cards\ronaldo.png" />
+    <Content Include="Cards\rooney.png" />
+    <Content Include="Cards\salah.png" />
+    <Content Include="Cards\sterling.png" />
+    <Content Include="Cards\suarez.png" />
+    <Content Include="Cards\swiderski.png" />
+    <Content Include="Cards\szczesny.png" />
+    <Content Include="Cards\thelin.png" />
+    <Content Include="Cards\thiago.png" />
+    <Content Include="Cards\walker.png" />
+    <Content Include="Cards\young.png" />
+    <Content Include="Cards\zielinski.png" />
+    <Content Include="HideCard\hide.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
