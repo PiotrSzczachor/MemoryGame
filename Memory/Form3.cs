@@ -15,6 +15,7 @@ namespace Memory
     {
 
         List<PictureBox> Cardslist = new List<PictureBox>();
+        List<PictureBox> HideCardsList = new List<PictureBox>();
         List<string> FilesNames = null;
         List<string> CardsNames = null;
 
@@ -23,73 +24,97 @@ namespace Memory
             InitializeComponent();
 
             int iterations = Settings.getInstance().getNumberOfCards();
- 
-            TableLayoutPanel table = null;
 
             getCardsAndFilesNames();
+            TableLayoutPanel cardsTable = new TableLayoutPanel();
+            TableLayoutPanel hideTable = new TableLayoutPanel();
 
             for (int i=0; i<iterations; i++)
             {
                 if (iterations == 48)
                 {
-                    table = MakeTableLayoutPanel(4, 12);
-                    //table.Padding = GetCorrectionPadding(table, 4);
-                    PictureBox picture = new PictureBox
+                    MakeTableLayoutPanel(4, 12, cardsTable);
+                    MakeTableLayoutPanel(4, 12, hideTable);
+                    hideTable.Visible = false;
+
+                    PictureBox card = new PictureBox
                     {
                         Name = CardsNames[i],
                         Size = new Size(112,175),
                         Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\"+FilesNames[i]),
                         SizeMode = PictureBoxSizeMode.StretchImage
                     };
+                    card.Click += (s, e) => { card.Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\HideCard\hide.jpg"); };
+                    Cardslist.Add(card);
+
+                    PictureBox hideCard = new PictureBox
+                    {
+                        Name = "hideCard",
+                        Size = new Size(112, 175),
+                        Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\HideCard\hide.jpg"),
+                        SizeMode = PictureBoxSizeMode.StretchImage
+                    };
+                    HideCardsList.Add(hideCard);
+
+                }
+                if (iterations == 96)
+                {
+                    MakeTableLayoutPanel(4, 12, cardsTable);
+
+                    PictureBox picture = new PictureBox
+                    {
+                        Name = CardsNames[i],
+                        Size = new Size(112, 175),
+                        Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\" + FilesNames[i]),
+                        SizeMode = PictureBoxSizeMode.StretchImage
+                    };
+                    Cardslist.Add(picture);
+                }
+                if (iterations == 120)
+                {
+                    MakeTableLayoutPanel(4, 12, cardsTable);
+
+                    PictureBox picture = new PictureBox
+                    {
+                        Name = CardsNames[i],
+                        Size = new Size(112, 175),
+                        Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\" + FilesNames[i]),
+                        SizeMode = PictureBoxSizeMode.StretchImage
+                    };
                     Cardslist.Add(picture);
                 }
             }
-            
-            foreach(PictureBox p in Cardslist)
+
+
+            foreach (PictureBox p in Cardslist)
             {
-                Console.WriteLine(p.Name);
-                table.Controls.Add(p);
+                cardsTable.Controls.Add(p);
             }
-            
+            foreach (PictureBox p in HideCardsList)
+            {
+                hideTable.Controls.Add(p);
+            }
+
+
 
         }
 
-        private TableLayoutPanel MakeTableLayoutPanel(int rows, int cols)
+        private void MakeTableLayoutPanel(int rows, int cols, TableLayoutPanel tableLayoutPanel_)
         {
-            TableLayoutPanel tableLayoutPanel = new TableLayoutPanel();
-            tableLayoutPanel.RowCount = rows;
-            tableLayoutPanel.BackColor = Color.Transparent;
-            tableLayoutPanel.ColumnCount = cols;
-            tableLayoutPanel.AutoSize = true;
-            tableLayoutPanel.Location = new Point(70, 70);
+            tableLayoutPanel_.RowCount = rows;
+            tableLayoutPanel_.ColumnCount = cols;
+            tableLayoutPanel_.BackColor = Color.Transparent;
+            tableLayoutPanel_.AutoSize = true;
+            tableLayoutPanel_.Location = new Point(70, 70);
 
-            tableLayoutPanel.RowStyles.Clear();
-            tableLayoutPanel.ColumnStyles.Clear();
+            tableLayoutPanel_.RowStyles.Clear();
+            tableLayoutPanel_.ColumnStyles.Clear();
 
-            Controls.Add(tableLayoutPanel);
-            
-            return tableLayoutPanel;
+            Controls.Add(tableLayoutPanel_);
+
         }
 
 
-        private Padding GetCorrectionPadding(TableLayoutPanel TLP, int minimumPadding)
-        {
-            int minPad = minimumPadding;
-            Rectangle netRect = TLP.ClientRectangle;
-            netRect.Inflate(-minPad, -minPad);
-
-            int w = netRect.Width / TLP.ColumnCount;
-            int h = netRect.Height / TLP.RowCount;
-
-            int deltaX = (netRect.Width - w * TLP.ColumnCount) / 2;
-            int deltaY = (netRect.Height - h * TLP.RowCount) / 2;
-
-            int OddX = (netRect.Width - w * TLP.ColumnCount) % 2;
-            int OddY = (netRect.Height - h * TLP.RowCount) % 2;
-
-            return new Padding(minPad + deltaX, minPad + deltaY,
-                               minPad + deltaX + OddX, minPad + deltaY + OddY);
-        }
 
         private void getCardsAndFilesNames()
         {
