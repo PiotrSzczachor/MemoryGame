@@ -28,21 +28,49 @@ namespace Memory
             getCardsAndFilesNames();
             TableLayoutPanel cardsTable = new TableLayoutPanel();
 
-            for (int i=0; i<iterations; i++)
+            List<int> usedIndexes = new List<int>();
+            Random random = new Random();
+            int index = random.Next(60);
+
+
+            for (int i=0; i<iterations/2; i++)
             {
+                while (usedIndexes.Contains(index))
+                {
+                    index = random.Next(60);
+                }
+                usedIndexes.Add(index);
+
                 if (iterations == 48)
                 {
                     MakeTableLayoutPanel(4, 12, cardsTable);
 
+
                     PictureBox card = new PictureBox
                     {
-                        Name = CardsNames[i],
+                        Name = CardsNames[usedIndexes[i]],
                         Size = new Size(112, 175),
                         Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\HideCard\hide.jpg"),
                         SizeMode = PictureBoxSizeMode.StretchImage,
-                        Tag = FilesNames[i]
+                        Tag = FilesNames[usedIndexes[i]]
                     };
-                    card.Click += (s, e) => { card.Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\"+card.Tag.ToString()); };
+                    card.Click += (s, e) => 
+                    {
+                        if (Clicekd.Count < 2)
+                        {
+                            card.Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\" + card.Tag.ToString());
+                            Clicekd.Add(card);
+                        }
+                        if (Clicekd.Count == 2)
+                        {
+                            if (Clicekd[0].Tag == Clicekd[1].Tag)
+                            {
+                                Clicekd[0].Image = null;
+                                Clicekd[1].Image = null;
+                                Clicekd.Clear();
+                            }
+                        }
+                    };
                     Cardslist.Add(card);
 
                 }
@@ -50,39 +78,111 @@ namespace Memory
                 {
                     MakeTableLayoutPanel(6, 16, cardsTable);
 
-                    //Do zmiany
-                    PictureBox picture = new PictureBox
+                    PictureBox card = new PictureBox
                     {
-                        Name = "hiddenCard",
+                        Name = CardsNames[usedIndexes[i]],
                         Size = new Size(75, 116),
                         Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\HideCard\hide.jpg"),
-                        SizeMode = PictureBoxSizeMode.StretchImage
+                        SizeMode = PictureBoxSizeMode.StretchImage,
+                        Tag = FilesNames[usedIndexes[i]]
                     };
-                    Cardslist.Add(picture);
+                    card.Click += (s, e) =>
+                    {
+                        if (Clicekd.Count < 2)
+                        {
+                            card.Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\" + card.Tag.ToString());
+                            Clicekd.Add(card);
+                        }
+                    };
+                    Cardslist.Add(card);
                 }
                 if (iterations == 120)
                 {
                     MakeTableLayoutPanel(8, 15, cardsTable);
 
-                    //Do zmiany
-                    PictureBox picture = new PictureBox
+                    PictureBox card = new PictureBox
                     {
-                        Name = "hideCard",
+                        Name = CardsNames[usedIndexes[i]],
                         Size = new Size(56, 88),
                         Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\HideCard\hide.jpg"),
-                        SizeMode = PictureBoxSizeMode.StretchImage
+                        SizeMode = PictureBoxSizeMode.StretchImage,
+                        Tag = FilesNames[usedIndexes[i]]
                     };
-                    Cardslist.Add(picture);
+                    card.Click += (s, e) =>
+                    {
+                        if (Clicekd.Count < 2)
+                        {
+                            card.Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\" + card.Tag.ToString());
+                            Clicekd.Add(card);
+                        }
+                         
+                    
+                    };
+                    Cardslist.Add(card);
                 }
             }
 
+            List<PictureBox> cardsToPlay = new List<PictureBox>();
 
             foreach (PictureBox p in Cardslist)
             {
-                cardsTable.Controls.Add(p);
+                PictureBox card_2 = new PictureBox
+                {
+                    Name = p.Name+"2",
+                    Size = p.Size,
+                    Image = p.Image,
+                    SizeMode = p.SizeMode,
+                    Tag =p.Tag
+                };
+                card_2.Click += (s, e) =>
+                {
+                    if (Clicekd.Count < 2)
+                    {
+                        card_2.Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\" + card_2.Tag.ToString());
+                        Clicekd.Add(card_2);
+                    }
+                    
+                
+                };
+                cardsToPlay.Add(card_2);
+                cardsToPlay.Add(p);
+            }
+
+            usedIndexes.Clear();
+
+            index = random.Next(cardsToPlay.Count);
+
+            for (int i=0; i < cardsToPlay.Count; i++)
+            {
+                while (usedIndexes.Contains(index))
+                {
+                    index = random.Next(cardsToPlay.Count);
+                }
+                usedIndexes.Add(index);
+                cardsTable.Controls.Add(cardsToPlay[index]);
             }
             
 
+
+        }
+
+        private List<PictureBox> MakeListOfRandomCards(List<PictureBox> list, int iterations)
+        {
+            List<PictureBox> cards = new List<PictureBox>();
+            List<int> usedIndexes = new List<int>();
+            Random random = new Random();
+            int index = random.Next(list.Count);
+
+            for (int i = 0; i < iterations/2; i++)
+            {
+                while (!usedIndexes.Contains(index))
+                {
+                    index = random.Next(list.Count);
+                }
+                cards.Add(list[index]);
+                usedIndexes.Add(index);
+            }
+            return cards;
         }
 
         private void MakeTableLayoutPanel(int rows, int cols, TableLayoutPanel tableLayoutPanel_)
