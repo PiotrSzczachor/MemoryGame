@@ -56,7 +56,7 @@ namespace Memory
                 {
                     checkBox1.Checked = false;
                     checkBox3.Checked = false;
-                    settings.setNumberOfCards(80);
+                    settings.setNumberOfCards(96);
                 }
                 
             }

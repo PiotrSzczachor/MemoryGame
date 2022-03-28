@@ -15,7 +15,7 @@ namespace Memory
     {
 
         List<PictureBox> Cardslist = new List<PictureBox>();
-        List<PictureBox> HideCardsList = new List<PictureBox>();
+        List<PictureBox> Clicekd = new List<PictureBox>();
         List<string> FilesNames = null;
         List<string> CardsNames = null;
 
@@ -27,58 +27,49 @@ namespace Memory
 
             getCardsAndFilesNames();
             TableLayoutPanel cardsTable = new TableLayoutPanel();
-            TableLayoutPanel hideTable = new TableLayoutPanel();
 
             for (int i=0; i<iterations; i++)
             {
                 if (iterations == 48)
                 {
                     MakeTableLayoutPanel(4, 12, cardsTable);
-                    MakeTableLayoutPanel(4, 12, hideTable);
-                    hideTable.Visible = false;
 
                     PictureBox card = new PictureBox
                     {
                         Name = CardsNames[i],
-                        Size = new Size(112,175),
-                        Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\"+FilesNames[i]),
-                        SizeMode = PictureBoxSizeMode.StretchImage
-                    };
-                    card.Click += (s, e) => { card.Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\HideCard\hide.jpg"); };
-                    Cardslist.Add(card);
-
-                    PictureBox hideCard = new PictureBox
-                    {
-                        Name = "hideCard",
                         Size = new Size(112, 175),
                         Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\HideCard\hide.jpg"),
-                        SizeMode = PictureBoxSizeMode.StretchImage
+                        SizeMode = PictureBoxSizeMode.StretchImage,
+                        Tag = FilesNames[i]
                     };
-                    HideCardsList.Add(hideCard);
+                    card.Click += (s, e) => { card.Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\"+card.Tag.ToString()); };
+                    Cardslist.Add(card);
 
                 }
                 if (iterations == 96)
                 {
-                    MakeTableLayoutPanel(4, 12, cardsTable);
+                    MakeTableLayoutPanel(6, 16, cardsTable);
 
+                    //Do zmiany
                     PictureBox picture = new PictureBox
                     {
-                        Name = CardsNames[i],
-                        Size = new Size(112, 175),
-                        Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\" + FilesNames[i]),
+                        Name = "hiddenCard",
+                        Size = new Size(75, 116),
+                        Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\HideCard\hide.jpg"),
                         SizeMode = PictureBoxSizeMode.StretchImage
                     };
                     Cardslist.Add(picture);
                 }
                 if (iterations == 120)
                 {
-                    MakeTableLayoutPanel(4, 12, cardsTable);
+                    MakeTableLayoutPanel(8, 15, cardsTable);
 
+                    //Do zmiany
                     PictureBox picture = new PictureBox
                     {
-                        Name = CardsNames[i],
-                        Size = new Size(112, 175),
-                        Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\" + FilesNames[i]),
+                        Name = "hideCard",
+                        Size = new Size(56, 88),
+                        Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\HideCard\hide.jpg"),
                         SizeMode = PictureBoxSizeMode.StretchImage
                     };
                     Cardslist.Add(picture);
@@ -90,12 +81,7 @@ namespace Memory
             {
                 cardsTable.Controls.Add(p);
             }
-            foreach (PictureBox p in HideCardsList)
-            {
-                hideTable.Controls.Add(p);
-            }
-
-
+            
 
         }
 
