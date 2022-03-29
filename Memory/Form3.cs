@@ -92,12 +92,25 @@ namespace Memory
                                 //If it wasn't pair, wait CardsOpenTime
                                 if (Clicekd[0].Tag != Clicekd[1].Tag)
                                 {
-                                    /*card.Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\" + card.Tag.ToString());
-                                    System.Threading.Thread.Sleep(Settings.getInstance().getCardsOpenTime()*1000);
+                                    List<PictureBox> pictureBoxes = new List<PictureBox>();
                                     foreach(PictureBox p in Clicekd)
                                     {
-                                        p.Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\HideCard\hide.jpg");
-                                    }*/
+                                        pictureBoxes.Add(p);
+                                    }
+                                    timer2.Enabled = true;
+                                    DateTime time = DateTime.Now;
+                                    timer2.Tick += (s_, e_) =>
+                                    {
+                                        TimeSpan actualTime = DateTime.Now.Subtract(time);
+                                        int seconds = actualTime.Seconds;
+                                        if (seconds == Settings.getInstance().getCardsOpenTime())
+                                        {
+                                            turnOver(pictureBoxes);
+                                        }
+                                        label2.Text = seconds.ToString();
+                                        
+                                    };
+
                                 }
                                 //Clearing Clicked list to use it one more time in the future user types
                                 Clicekd.Clear();
@@ -195,12 +208,23 @@ namespace Memory
              
                             if (Clicekd[0].Tag != Clicekd[1].Tag)
                             {
-                                /*Clicekd[1].Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\" + Clicekd[1].Tag.ToString());
-                                System.Threading.Thread.Sleep(Settings.getInstance().getCardsOpenTime() * 1000);
+                                List<PictureBox> pictureBoxes = new List<PictureBox>();
                                 foreach (PictureBox p_ in Clicekd)
                                 {
-                                    p_.Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\HideCard\hide.jpg");
-                                }*/
+                                    pictureBoxes.Add(p_);
+                                }
+                                timer2.Enabled = true;
+                                DateTime time = DateTime.Now;
+                                timer2.Tick += (s_, e_) =>
+                                {
+                                    TimeSpan actualTime = DateTime.Now.Subtract(time);
+                                    int seconds = actualTime.Seconds;
+                                    if (seconds == Settings.getInstance().getCardsOpenTime())
+                                    {
+                                        turnOver(pictureBoxes);
+                                    }
+                                    label2.Text = seconds.ToString();
+                                };
                             }
                             Clicekd.Clear();
                         }
@@ -227,6 +251,14 @@ namespace Memory
             showCards(cardsTable);
 
 
+        }
+
+        private void turnOver(List<PictureBox> list)
+        {
+            foreach(PictureBox p in list)
+            {
+                p.Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\HideCard\hide.jpg");
+            }
         }
 
         private void showCards(TableLayoutPanel tlp)
@@ -365,5 +397,6 @@ namespace Memory
         {
             Settings.getInstance().setCardsOpenTime(2);
         }
+
     }
 }
