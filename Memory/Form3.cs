@@ -21,6 +21,9 @@ namespace Memory
         List<string> FilesNames = null;
         List<string> CardsNames = null;
 
+        int gameTime;
+        int tryCounter;
+
         public Form3()
         {
             InitializeComponent();
@@ -114,6 +117,7 @@ namespace Memory
                                 }
                                 //Clearing Clicked list to use it one more time in the future user types
                                 Clicekd.Clear();
+                                tryCounter++;
                             }
                         }
                         
@@ -227,6 +231,7 @@ namespace Memory
                                 };
                             }
                             Clicekd.Clear();
+                            tryCounter++;
                         }
                     }
                 };
@@ -251,6 +256,32 @@ namespace Memory
             showCards(cardsTable);
 
 
+        }
+
+        private void countScore()
+        {
+            int initialScore = 1000000;
+            initialScore = initialScore - gameTime;
+            initialScore = initialScore - tryCounter;
+            Player.getInstance().setScore(initialScore);
+            TextWriter tsw = new StreamWriter(@"C:\Users\Piotr\source\repos\Memory\Memory\Rank.txt", true);
+            //Writing user score to the file.
+            tsw.WriteLine(Player.getInstance().getUsername() + ": " + Player.getInstance().getScore());
+            //Close the file.
+            tsw.Close();
+        }
+
+        private bool checkWin(TableLayoutPanel tlp)
+        {
+            bool win = true;
+            foreach(PictureBox p in tlp.Controls)
+            {
+                if(p.Image != null)
+                {
+                    win = false;
+                }
+            }
+            return win;
         }
 
         private void turnOver(List<PictureBox> list)
@@ -282,6 +313,15 @@ namespace Memory
                     }
                 }
                 label1.Text = hours.ToString() + ":" + minutes.ToString() + ":" + seconds.ToString();
+                gameTime = hours * 3600 + minutes * 60 + seconds;
+                if (checkWin(tlp))
+                {
+                    timer1.Stop();
+                    countScore();
+                    this.Hide();
+                    new Form4().ShowDialog();
+                    this.Close();
+                }
             };
         }
 
