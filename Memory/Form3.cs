@@ -23,6 +23,7 @@ namespace Memory
 
         int gameTime;
         int tryCounter;
+        bool clikckAllowed = false;
 
         public Form3()
         {
@@ -71,7 +72,7 @@ namespace Memory
                     card.Click += (s, e) => 
                     {
                         //If the card image=null thats mean that the card has been guessed so you can't click it one more time
-                        if(card.Image != null)
+                        if(card.Image != null && clikckAllowed)
                         {
                             //If len of Clicked list is less than 2, it means that we can chose first or second card and turn it over
                             if (Clicekd.Count < 2)
@@ -84,6 +85,7 @@ namespace Memory
                             //If len of Clicked list is equal to 2, it means that user chose 2 cards and we need to check if it is pair or not
                             if (Clicekd.Count == 2)
                             {
+                                clikckAllowed = false;
                                 //Checking that the user did not choose the same card twice so we are comparing PictureBoxes names
                                 //If first card tag is the same as second card tag, thats mean it is a pair
                                 if (Clicekd[0].Tag == Clicekd[1].Tag && Clicekd[0].Name != Clicekd[1].Name)
@@ -109,6 +111,7 @@ namespace Memory
                                         if (seconds == Settings.getInstance().getCardsOpenTime())
                                         {
                                             turnOver(pictureBoxes);
+                                            clikckAllowed = true;
                                         }
                                         label2.Text = seconds.ToString();
                                         
@@ -195,7 +198,7 @@ namespace Memory
                 };
                 card_2.Click += (s, e) =>
                 {
-                    if (card_2.Image != null)
+                    if (card_2.Image != null && clikckAllowed)
                     {
                         if (Clicekd.Count < 2)
                         {
@@ -204,6 +207,7 @@ namespace Memory
                         }
                         if (Clicekd.Count == 2)
                         {
+                            clikckAllowed = false;
                             if (Clicekd[0].Tag == Clicekd[1].Tag && Clicekd[0].Name != Clicekd[1].Name)
                             {
                                 Clicekd[0].Image = null;
@@ -225,6 +229,7 @@ namespace Memory
                                     int seconds = actualTime.Seconds;
                                     if (seconds == Settings.getInstance().getCardsOpenTime())
                                     {
+                                        clikckAllowed = true;
                                         turnOver(pictureBoxes);
                                     }
                                     label2.Text = seconds.ToString();
@@ -310,6 +315,7 @@ namespace Memory
                     foreach(PictureBox p in tlp.Controls)
                     {
                         p.Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\HideCard\hide.jpg");
+                        clikckAllowed = true;
                     }
                 }
                 label1.Text = hours.ToString() + ":" + minutes.ToString() + ":" + seconds.ToString();
