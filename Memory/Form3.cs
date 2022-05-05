@@ -24,10 +24,13 @@ namespace Memory
         int gameTime;
         int tryCounter;
         bool clikckAllowed = false;
+        bool timeStopped = false;
 
         public Form3()
         {
             InitializeComponent();
+            button1.Enabled = false;
+            label2.Visible = false;
 
             //Checking how many cards on the boarad user have chosen
             int iterations = Settings.getInstance().getNumberOfCards();
@@ -63,7 +66,7 @@ namespace Memory
                     PictureBox card = new PictureBox
                     {
                         Name = CardsNames[usedIndexes[i]],
-                        Size = new Size(112, 175),
+                        Size = new Size(103, 153),
                         Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\HideCard\hide.jpg"),
                         SizeMode = PictureBoxSizeMode.StretchImage,
                         Tag = FilesNames[usedIndexes[i]]
@@ -93,6 +96,7 @@ namespace Memory
                                     //Setting PictureBoxex image to null to make the cards disappeared from the board
                                     Clicekd[0].Image = null;
                                     Clicekd[1].Image = null;
+                                    clikckAllowed = true;
                                 }
                                 //If it wasn't pair, wait CardsOpenTime
                                 if (Clicekd[0].Tag != Clicekd[1].Tag)
@@ -114,7 +118,14 @@ namespace Memory
                                             clikckAllowed = true;
                                         }
                                         label2.Text = seconds.ToString();
-                                        
+                                        if (clikckAllowed == true)
+                                        {
+                                            button1.Enabled = true;
+                                        }
+                                        else
+                                        {
+                                            button1.Enabled = false;
+                                        }
                                     };
 
                                 }
@@ -146,11 +157,67 @@ namespace Memory
                     };
                     card.Click += (s, e) =>
                     {
-                        if (Clicekd.Count < 2)
+                        //If the card image=null thats mean that the card has been guessed so you can't click it one more time
+                        if (card.Image != null && clikckAllowed)
                         {
-                            card.Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\" + card.Tag.ToString());
-                            Clicekd.Add(card);
+                            //If len of Clicked list is less than 2, it means that we can chose first or second card and turn it over
+                            if (Clicekd.Count < 2)
+                            {
+                                //Turning the card over
+                                card.Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\" + card.Tag.ToString());
+                                //Adding card to Clicked list 
+                                Clicekd.Add(card);
+                            }
+                            //If len of Clicked list is equal to 2, it means that user chose 2 cards and we need to check if it is pair or not
+                            if (Clicekd.Count == 2)
+                            {
+                                clikckAllowed = false;
+                                //Checking that the user did not choose the same card twice so we are comparing PictureBoxes names
+                                //If first card tag is the same as second card tag, thats mean it is a pair
+                                if (Clicekd[0].Tag == Clicekd[1].Tag && Clicekd[0].Name != Clicekd[1].Name)
+                                {
+                                    //Setting PictureBoxex image to null to make the cards disappeared from the board
+                                    Clicekd[0].Image = null;
+                                    Clicekd[1].Image = null;
+                                    clikckAllowed = true;
+                                }
+                                //If it wasn't pair, wait CardsOpenTime
+                                if (Clicekd[0].Tag != Clicekd[1].Tag)
+                                {
+                                    List<PictureBox> pictureBoxes = new List<PictureBox>();
+                                    foreach (PictureBox p in Clicekd)
+                                    {
+                                        pictureBoxes.Add(p);
+                                    }
+                                    timer2.Enabled = true;
+                                    DateTime time = DateTime.Now;
+                                    timer2.Tick += (s_, e_) =>
+                                    {
+                                        TimeSpan actualTime = DateTime.Now.Subtract(time);
+                                        int seconds = actualTime.Seconds;
+                                        if (seconds == Settings.getInstance().getCardsOpenTime())
+                                        {
+                                            turnOver(pictureBoxes);
+                                            clikckAllowed = true;
+                                        }
+                                        label2.Text = seconds.ToString();
+                                        if (clikckAllowed == true)
+                                        {
+                                            button1.Enabled = true;
+                                        }
+                                        else
+                                        {
+                                            button1.Enabled = false;
+                                        }
+                                    };
+
+                                }
+                                //Clearing Clicked list to use it one more time in the future user types
+                                Clicekd.Clear();
+                                tryCounter++;
+                            }
                         }
+
                     };
                     Cardslist.Add(card);
                 }
@@ -158,26 +225,81 @@ namespace Memory
                 if (iterations == 120)
                 {
                     //Initializing TableLayoutPanel with specific number of rows and columns for this type of game
-                    MakeTableLayoutPanel(8, 15, cardsTable);
+                    MakeTableLayoutPanel(6, 20, cardsTable);
 
                     //Creating new picture box with hidden card image and name of source image in tag
                     PictureBox card = new PictureBox
                     {
                         Name = CardsNames[usedIndexes[i]],
-                        Size = new Size(56, 88),
+                        Size = new Size(60, 92),
                         Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\HideCard\hide.jpg"),
                         SizeMode = PictureBoxSizeMode.StretchImage,
                         Tag = FilesNames[usedIndexes[i]]
                     };
                     card.Click += (s, e) =>
                     {
-                        if (Clicekd.Count < 2)
+                        //If the card image=null thats mean that the card has been guessed so you can't click it one more time
+                        if (card.Image != null && clikckAllowed)
                         {
-                            card.Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\" + card.Tag.ToString());
-                            Clicekd.Add(card);
+                            //If len of Clicked list is less than 2, it means that we can chose first or second card and turn it over
+                            if (Clicekd.Count < 2)
+                            {
+                                //Turning the card over
+                                card.Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\" + card.Tag.ToString());
+                                //Adding card to Clicked list 
+                                Clicekd.Add(card);
+                            }
+                            //If len of Clicked list is equal to 2, it means that user chose 2 cards and we need to check if it is pair or not
+                            if (Clicekd.Count == 2)
+                            {
+                                clikckAllowed = false;
+                                //Checking that the user did not choose the same card twice so we are comparing PictureBoxes names
+                                //If first card tag is the same as second card tag, thats mean it is a pair
+                                if (Clicekd[0].Tag == Clicekd[1].Tag && Clicekd[0].Name != Clicekd[1].Name)
+                                {
+                                    //Setting PictureBoxex image to null to make the cards disappeared from the board
+                                    Clicekd[0].Image = null;
+                                    Clicekd[1].Image = null;
+                                    clikckAllowed = true;
+                                }
+                                //If it wasn't pair, wait CardsOpenTime
+                                if (Clicekd[0].Tag != Clicekd[1].Tag)
+                                {
+                                    List<PictureBox> pictureBoxes = new List<PictureBox>();
+                                    foreach (PictureBox p in Clicekd)
+                                    {
+                                        pictureBoxes.Add(p);
+                                    }
+                                    timer2.Enabled = true;
+                                    DateTime time = DateTime.Now;
+                                    timer2.Tick += (s_, e_) =>
+                                    {
+                                        TimeSpan actualTime = DateTime.Now.Subtract(time);
+                                        int seconds = actualTime.Seconds;
+                                        if (seconds == Settings.getInstance().getCardsOpenTime())
+                                        {
+                                            turnOver(pictureBoxes);
+                                            clikckAllowed = true;
+                                        }
+                                        label2.Text = seconds.ToString();
+                                        if (clikckAllowed == true)
+                                        {
+                                            button1.Enabled = true;
+                                        }
+                                        else
+                                        {
+                                            button1.Enabled = false;
+                                        }
+
+                                    };
+
+                                }
+                                //Clearing Clicked list to use it one more time in the future user types
+                                Clicekd.Clear();
+                                tryCounter++;
+                            }
                         }
-                         
-                    
+
                     };
                     Cardslist.Add(card);
                     
@@ -212,6 +334,7 @@ namespace Memory
                             {
                                 Clicekd[0].Image = null;
                                 Clicekd[1].Image = null;
+                                clikckAllowed=true;
                             }
              
                             if (Clicekd[0].Tag != Clicekd[1].Tag)
@@ -233,6 +356,14 @@ namespace Memory
                                         turnOver(pictureBoxes);
                                     }
                                     label2.Text = seconds.ToString();
+                                    if (clikckAllowed == true)
+                                    {
+                                        button1.Enabled = true;
+                                    }
+                                    else
+                                    {
+                                        button1.Enabled = false;
+                                    }
                                 };
                             }
                             Clicekd.Clear();
@@ -320,6 +451,13 @@ namespace Memory
                 }
                 label1.Text = hours.ToString() + ":" + minutes.ToString() + ":" + seconds.ToString();
                 gameTime = hours * 3600 + minutes * 60 + seconds;
+                if(clikckAllowed == true)
+                {
+                    button1.Enabled = true;
+                } else
+                {
+                    button1.Enabled = false;
+                }
                 if (checkWin(tlp))
                 {
                     timer1.Stop();
@@ -444,5 +582,25 @@ namespace Memory
             Settings.getInstance().setCardsOpenTime(2);
         }
 
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (button1.Text == "Time stop")
+            {
+                timer1.Stop();
+                timeStopped = true;
+                button1.Text = "Time start";
+            } else
+            {
+                timer1.Start();
+                timeStopped = false;
+                button1.Text = "Time stop";
+            }
+            
+        }
     }
 }

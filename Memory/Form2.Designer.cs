@@ -136,7 +136,7 @@
             this.checkBox6.Name = "checkBox6";
             this.checkBox6.Size = new System.Drawing.Size(77, 24);
             this.checkBox6.TabIndex = 9;
-            this.checkBox6.Text = "0 sec.";
+            this.checkBox6.Text = "5 sec.";
             this.checkBox6.UseVisualStyleBackColor = true;
             this.checkBox6.CheckedChanged += new System.EventHandler(this.checkBox6_CheckedChanged);
             // 

@@ -148,7 +148,7 @@ namespace Memory
                 {
                     checkBox4.Checked = false;
                     checkBox5.Checked = false;
-                    settings.setInitialTime(0);
+                    settings.setInitialTime(5);
                 }
 
             }
