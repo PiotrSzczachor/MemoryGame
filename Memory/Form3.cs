@@ -44,9 +44,9 @@ namespace Memory
             Random random = new Random();
             int index = random.Next(60);
 
-            
+
             //Filling CardsList 
-            for (int i=0; i<iterations/2; i++)
+            for (int i = 0; i < iterations / 2; i++)
             {
                 //Getting random indexes to randomize cards that will be in the game
                 while (usedIndexes.Contains(index))
@@ -112,7 +112,7 @@ namespace Memory
                     };
                     addClickFunction(card);
                     Cardslist.Add(card);
-                    
+
                 }
             }
 
@@ -122,13 +122,14 @@ namespace Memory
             {
                 PictureBox card_2 = new PictureBox
                 {
-                    Name = p.Name+"2",
+                    Name = p.Name + "2",
                     Size = p.Size,
                     Image = p.Image,
                     SizeMode = p.SizeMode,
-                    Tag =p.Tag
+                    Tag = p.Tag
                 };
                 addClickFunction(card_2);
+                //addClickFunction(p);
                 cardsToPlay.Add(card_2);
                 cardsToPlay.Add(p);
             }
@@ -137,7 +138,7 @@ namespace Memory
 
             index = random.Next(cardsToPlay.Count);
 
-            for (int i=0; i < cardsToPlay.Count; i++)
+            for (int i = 0; i < cardsToPlay.Count; i++)
             {
                 while (usedIndexes.Contains(index))
                 {
@@ -168,9 +169,9 @@ namespace Memory
         private bool checkWin(TableLayoutPanel tlp)
         {
             bool win = true;
-            foreach(PictureBox p in tlp.Controls)
+            foreach (PictureBox p in tlp.Controls)
             {
-                if(p.Image != null)
+                if (p.Image != null)
                 {
                     win = false;
                 }
@@ -185,14 +186,24 @@ namespace Memory
                 //If the card image=null thats mean that the card has been guessed so you can't click it one more time
                 if (card.Image != null && clikckAllowed)
                 {
-                    //If len of Clicked list is less than 2, it means that we can chose first or second card and turn it over
-                    if (Clicekd.Count < 2)
+                    //Console.WriteLine(Clicekd.Count.ToString());
+                    //If len of Clicked list is 0, it means that we can chose first card and turn it over
+                    if (Clicekd.Count == 0)
                     {
                         //Turning the card over
                         card.Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\" + card.Tag.ToString());
                         //Adding card to Clicked list 
                         Clicekd.Add(card);
                     }
+                    if (Clicekd.Count == 1 && Clicekd[0].Name != card.Name)
+                    {
+                        //Turning the card over
+                        card.Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\" + card.Tag.ToString());
+                        //Adding card to Clicked list 
+                        Clicekd.Add(card);
+                        clikckAllowed = false;
+                    }
+                    Console.WriteLine(Clicekd.Count.ToString());
                     //If len of Clicked list is equal to 2, it means that user chose 2 cards and we need to check if it is pair or not
                     if (Clicekd.Count == 2)
                     {
@@ -215,11 +226,13 @@ namespace Memory
                                 pictureBoxes.Add(p);
                             }
                             timer2.Enabled = true;
-                            DateTime time = DateTime.Now;
+                            //DateTime time = DateTime.Now;
+                            int seconds = 0;
                             timer2.Tick += (s_, e_) =>
                             {
-                                TimeSpan actualTime = DateTime.Now.Subtract(time);
-                                int seconds = actualTime.Seconds;
+                                //TimeSpan actualTime = DateTime.Now.Subtract(time);
+                                //int seconds = actualTime.Seconds;
+                                seconds++;
                                 if (seconds == Settings.getInstance().getCardsOpenTime())
                                 {
                                     turnOver(pictureBoxes);
@@ -248,7 +261,7 @@ namespace Memory
 
         private void turnOver(List<PictureBox> list)
         {
-            foreach(PictureBox p in list)
+            foreach (PictureBox p in list)
             {
                 p.Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\HideCard\hide.jpg");
             }
@@ -256,20 +269,21 @@ namespace Memory
 
         private void showCards(TableLayoutPanel tlp)
         {
-            foreach(PictureBox p in tlp.Controls)
+            foreach (PictureBox p in tlp.Controls)
             {
                 p.Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\" + p.Tag.ToString());
             }
             timer1.Enabled = true;
             DateTime time = DateTime.Now;
-            timer1.Tick += (s, e) => 
-            { 
+            timer1.Tick += (s, e) =>
+            {
                 TimeSpan actualTime = DateTime.Now.Subtract(time);
                 int seconds = actualTime.Seconds;
                 int minutes = actualTime.Minutes;
                 int hours = actualTime.Hours;
-                if (seconds+minutes*60 == Settings.getInstance().getInitialTime()) {
-                    foreach(PictureBox p in tlp.Controls)
+                if (seconds + minutes * 60 == Settings.getInstance().getInitialTime())
+                {
+                    foreach (PictureBox p in tlp.Controls)
                     {
                         p.Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\HideCard\hide.jpg");
                         clikckAllowed = true;
@@ -277,10 +291,11 @@ namespace Memory
                 }
                 label1.Text = hours.ToString() + ":" + minutes.ToString() + ":" + seconds.ToString();
                 gameTime = hours * 3600 + minutes * 60 + seconds;
-                if(clikckAllowed == true)
+                if (clikckAllowed == true)
                 {
                     button1.Enabled = true;
-                } else
+                }
+                else
                 {
                     button1.Enabled = false;
                 }
@@ -303,7 +318,7 @@ namespace Memory
             Random random = new Random();
             int index = random.Next(list.Count);
 
-            for (int i = 0; i < iterations/2; i++)
+            for (int i = 0; i < iterations / 2; i++)
             {
                 while (!usedIndexes.Contains(index))
                 {
@@ -353,7 +368,7 @@ namespace Memory
                 FilesNames.Add(f.Name);
             }
 
-           //saving files names without .png extenxion but with _ at the end into CardsNames list
+            //saving files names without .png extenxion but with _ at the end into CardsNames list
 
             if (CardsNames == null)
             {
@@ -367,14 +382,14 @@ namespace Memory
             foreach (string s in FilesNames)
             {
                 string[] parts = s.Split('.');
-                CardsNames.Add(parts[0]+'_');
+                CardsNames.Add(parts[0] + '_');
             }
-            
+
 
         }
 
         //Adding PictureBoxes to Controls
-            private void drawCards()
+        private void drawCards()
         {
             foreach (PictureBox picture in Cardslist)
             {
@@ -420,12 +435,18 @@ namespace Memory
                 timer1.Stop();
                 timeStopped = true;
                 button1.Text = "Time start";
-            } else
+            }
+            else
             {
                 timer1.Start();
                 timeStopped = false;
                 button1.Text = "Time stop";
             }
+
+        }
+
+        private void timer3_Tick(object sender, EventArgs e)
+        {
             
         }
     }
