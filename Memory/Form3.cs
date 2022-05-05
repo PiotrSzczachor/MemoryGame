@@ -129,7 +129,6 @@ namespace Memory
                     Tag = p.Tag
                 };
                 addClickFunction(card_2);
-                //addClickFunction(p);
                 cardsToPlay.Add(card_2);
                 cardsToPlay.Add(p);
             }
@@ -274,14 +273,16 @@ namespace Memory
                 p.Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\" + p.Tag.ToString());
             }
             timer1.Enabled = true;
-            DateTime time = DateTime.Now;
+            //DateTime time = DateTime.Now;
+            int seconds = 0;
             timer1.Tick += (s, e) =>
             {
-                TimeSpan actualTime = DateTime.Now.Subtract(time);
-                int seconds = actualTime.Seconds;
-                int minutes = actualTime.Minutes;
-                int hours = actualTime.Hours;
-                if (seconds + minutes * 60 == Settings.getInstance().getInitialTime())
+                seconds++;
+                //TimeSpan actualTime = DateTime.Now.Subtract(time);
+                //int seconds = actualTime.Seconds;
+                //int minutes = actualTime.Minutes;
+                //int hours = actualTime.Hours;
+                if (seconds == Settings.getInstance().getInitialTime())
                 {
                     foreach (PictureBox p in tlp.Controls)
                     {
@@ -289,8 +290,10 @@ namespace Memory
                         clikckAllowed = true;
                     }
                 }
-                label1.Text = hours.ToString() + ":" + minutes.ToString() + ":" + seconds.ToString();
-                gameTime = hours * 3600 + minutes * 60 + seconds;
+                int hours = seconds / 3600;
+                int minutes = seconds / 60;
+                label1.Text = hours.ToString() + ":" + minutes.ToString() + ":" + (seconds%60).ToString();
+                gameTime = seconds;
                 if (clikckAllowed == true)
                 {
                     button1.Enabled = true;
@@ -434,12 +437,14 @@ namespace Memory
             {
                 timer1.Stop();
                 timeStopped = true;
+                clikckAllowed = false;
                 button1.Text = "Time start";
             }
             else
             {
                 timer1.Start();
                 timeStopped = false;
+                clikckAllowed = true;
                 button1.Text = "Time stop";
             }
 
