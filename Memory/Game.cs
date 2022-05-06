@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -11,154 +9,9 @@ using System.Windows.Forms;
 
 namespace Memory
 {
-    public partial class Form3 : Form
+    internal class Game
     {
-        //List where randomly chosen cards are stored
-        List<PictureBox> Cardslist = new List<PictureBox>();
-        //List wich len is only 0, 1 or 2, it stores which cards user is checking right now
-        List<PictureBox> Clicekd = new List<PictureBox>();
-
-        List<string> FilesNames = null;
-        List<string> CardsNames = null;
-
-        int gameTime;
-        int tryCounter;
-        bool clikckAllowed = false;
-        bool timeStopped = false;
-
-        public Form3()
-        {
-            InitializeComponent();
-            button1.Enabled = false;
-            label2.Visible = false;
-
-            //Checking how many cards on the boarad user have chosen
-            int iterations = Settings.getInstance().getNumberOfCards();
-
-            //Getting all files and cards name from Cards folder
-            getCardsAndFilesNames();
-
-            TableLayoutPanel cardsTable = new TableLayoutPanel();
-            List<int> usedIndexes = new List<int>();
-
-            
-            Random random = new Random();
-            int index = random.Next(60);
-            
-            fillingCardsList(iterations, usedIndexes, cardsTable, index);
-
-            List<PictureBox> cardsToPlay = new List<PictureBox>();
-
-            foreach (PictureBox p in Cardslist)
-            {
-                PictureBox card_2 = new PictureBox
-                {
-                    Name = p.Name + "2",
-                    Size = p.Size,
-                    Image = p.Image,
-                    SizeMode = p.SizeMode,
-                    Tag = p.Tag
-                };
-                addClickFunction(card_2);
-                cardsToPlay.Add(card_2);
-                cardsToPlay.Add(p);
-            }
-
-            usedIndexes.Clear();
-
-            index = random.Next(cardsToPlay.Count);
-
-            for (int i = 0; i < cardsToPlay.Count; i++)
-            {
-                while (usedIndexes.Contains(index))
-                {
-                    index = random.Next(cardsToPlay.Count);
-                }
-                usedIndexes.Add(index);
-                cardsTable.Controls.Add(cardsToPlay[index]);
-            }
-
-            showCards(cardsTable);
-
-
-        }
-
-        private void fillingCardsList(int iterations, List<int> usedIndexes, TableLayoutPanel cardsTable, int index)
-        {
-            Random random = new Random();
-            //Filling CardsList 
-            for (int i = 0; i < iterations / 2; i++)
-            {
-                //Getting random indexes to randomize cards that will be in the game
-                while (usedIndexes.Contains(index))
-                {
-                    index = random.Next(60);
-                }
-                //usedIndexes is a list of unique int number in range(0, numberOfAllCards)
-                usedIndexes.Add(index);
-
-                //48 cards game
-                if (iterations == 48)
-                {
-                    //Initializing TableLayoutPanel with specific number of rows and columns for this type of game
-                    MakeTableLayoutPanel(4, 12, cardsTable);
-
-                    //Creating new picture box with hidden card image and name of source image in tag
-                    PictureBox card = new PictureBox
-                    {
-                        Name = CardsNames[usedIndexes[i]],
-                        Size = new Size(103, 153),
-                        Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\HideCard\hide.jpg"),
-                        SizeMode = PictureBoxSizeMode.StretchImage,
-                        Tag = FilesNames[usedIndexes[i]]
-                    };
-                    //Creating On_Click function to every card in the loop
-                    addClickFunction(card);
-                    //Adding PictureBox with specific On_Click function into CardsList
-                    Cardslist.Add(card);
-
-                }
-                //96 Cards game
-                if (iterations == 96)
-                {
-                    //Initializing TableLayoutPanel with specific number of rows and columns for this type of game
-                    MakeTableLayoutPanel(6, 16, cardsTable);
-
-                    //Creating new picture box with hidden card image and name of source image in tag
-                    PictureBox card = new PictureBox
-                    {
-                        Name = CardsNames[usedIndexes[i]],
-                        Size = new Size(75, 116),
-                        Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\HideCard\hide.jpg"),
-                        SizeMode = PictureBoxSizeMode.StretchImage,
-                        Tag = FilesNames[usedIndexes[i]]
-                    };
-                    addClickFunction(card);
-                    Cardslist.Add(card);
-                }
-                //120 Cards game
-                if (iterations == 120)
-                {
-                    //Initializing TableLayoutPanel with specific number of rows and columns for this type of game
-                    MakeTableLayoutPanel(6, 20, cardsTable);
-
-                    //Creating new picture box with hidden card image and name of source image in tag
-                    PictureBox card = new PictureBox
-                    {
-                        Name = CardsNames[usedIndexes[i]],
-                        Size = new Size(60, 92),
-                        Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\HideCard\hide.jpg"),
-                        SizeMode = PictureBoxSizeMode.StretchImage,
-                        Tag = FilesNames[usedIndexes[i]]
-                    };
-                    addClickFunction(card);
-                    Cardslist.Add(card);
-
-                }
-            }
-        }
-
-        private void countScore()
+        private void countScore(int gameTime, int tryCounter)
         {
             int initialScore = 1000000;
             initialScore = initialScore - gameTime;
@@ -183,8 +36,7 @@ namespace Memory
             }
             return win;
         }
-
-        private void addClickFunction(PictureBox card)
+        private void addClickFunction(PictureBox card, bool clikckAllowed, List<PictureBox> Clicekd, Timer timer2, Label label2, Button button1, int tryCounter)
         {
             card.Click += (s, e) =>
             {
@@ -263,7 +115,6 @@ namespace Memory
 
             };
         }
-
         private void turnOver(List<PictureBox> list)
         {
             foreach (PictureBox p in list)
@@ -272,7 +123,7 @@ namespace Memory
             }
         }
 
-        private void showCards(TableLayoutPanel tlp)
+        private void showCards(TableLayoutPanel tlp, Timer timer1, bool clikckAllowed, int gameTime, Button button1, Label label1, int tryCounter, Form3 this_)
         {
             foreach (PictureBox p in tlp.Controls)
             {
@@ -293,7 +144,7 @@ namespace Memory
                 }
                 int hours = seconds / 3600;
                 int minutes = seconds / 60;
-                label1.Text = hours.ToString() + ":" + minutes.ToString() + ":" + (seconds%60).ToString();
+                label1.Text = hours.ToString() + ":" + minutes.ToString() + ":" + (seconds % 60).ToString();
                 gameTime = seconds;
                 if (clikckAllowed == true)
                 {
@@ -306,10 +157,10 @@ namespace Memory
                 if (checkWin(tlp))
                 {
                     timer1.Stop();
-                    countScore();
-                    this.Hide();
+                    countScore(gameTime, tryCounter);
+                    this_.Hide();
                     new Form4().ShowDialog();
-                    this.Close();
+                    this_.Close();
                 }
             };
         }
@@ -334,7 +185,7 @@ namespace Memory
             return cards;
         }
 
-        private void MakeTableLayoutPanel(int rows, int cols, TableLayoutPanel tableLayoutPanel_)
+        private void MakeTableLayoutPanel(int rows, int cols, TableLayoutPanel tableLayoutPanel_, Form3 this_)
         {
             tableLayoutPanel_.RowCount = rows;
             tableLayoutPanel_.ColumnCount = cols;
@@ -345,13 +196,13 @@ namespace Memory
             tableLayoutPanel_.RowStyles.Clear();
             tableLayoutPanel_.ColumnStyles.Clear();
 
-            Controls.Add(tableLayoutPanel_);
+            this_.Controls.Add(tableLayoutPanel_);
 
         }
 
 
 
-        private void getCardsAndFilesNames()
+        private void getCardsAndFilesNames(List<string> FilesNames, List<string> CardsNames)
         {
             DirectoryInfo dir1 = new DirectoryInfo(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\");
             FileInfo[] files = dir1.GetFiles("*.png", SearchOption.AllDirectories);
@@ -393,67 +244,12 @@ namespace Memory
         }
 
         //Adding PictureBoxes to Controls
-        private void drawCards()
+        private void drawCards(Form3 this_, List<PictureBox> Cardslist)
         {
             foreach (PictureBox picture in Cardslist)
             {
-                Controls.Add(picture);
+                this_.Controls.Add(picture);
             }
-        }
-
-        private void Form3_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        //Changing CardsOpenTime while playing
-        private void sToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Settings.getInstance().setCardsOpenTime(10);
-        }
-
-        private void secToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Settings.getInstance().setCardsOpenTime(6);
-        }
-
-        private void secToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            Settings.getInstance().setCardsOpenTime(2);
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            if (button1.Text == "Time stop")
-            {
-                timer1.Stop();
-                timeStopped = true;
-                clikckAllowed = false;
-                button1.Text = "Time start";
-            }
-            else
-            {
-                timer1.Start();
-                timeStopped = false;
-                clikckAllowed = true;
-                button1.Text = "Time stop";
-            }
-
-        }
-
-        private void timer3_Tick(object sender, EventArgs e)
-        {
-            
         }
     }
 }
