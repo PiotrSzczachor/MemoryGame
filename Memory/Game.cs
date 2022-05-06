@@ -11,6 +11,114 @@ namespace Memory
 {
     internal class Game
     {
+        private void makeCardsToPlayList(List<int> usedIndexes, int index, List<PictureBox> cardsToPlay, TableLayoutPanel cardsTable, List<PictureBox> Cardslist)
+        {
+            Random random = new Random();
+            foreach (PictureBox p in Cardslist)
+            {
+                PictureBox card_2 = new PictureBox
+                {
+                    Name = p.Name + "2",
+                    Size = p.Size,
+                    Image = p.Image,
+                    SizeMode = p.SizeMode,
+                    Tag = p.Tag
+                };
+                addClickFunction(card_2);
+                cardsToPlay.Add(card_2);
+                cardsToPlay.Add(p);
+            }
+
+            usedIndexes.Clear();
+
+            index = random.Next(cardsToPlay.Count);
+
+            for (int i = 0; i < cardsToPlay.Count; i++)
+            {
+                while (usedIndexes.Contains(index))
+                {
+                    index = random.Next(cardsToPlay.Count);
+                }
+                usedIndexes.Add(index);
+                cardsTable.Controls.Add(cardsToPlay[index]);
+            }
+        }
+
+        private void fillingCardsList(int iterations, List<int> usedIndexes, TableLayoutPanel cardsTable, int index)
+        {
+            Random random = new Random();
+            //Filling CardsList 
+            for (int i = 0; i < iterations / 2; i++)
+            {
+                //Getting random indexes to randomize cards that will be in the game
+                while (usedIndexes.Contains(index))
+                {
+                    index = random.Next(60);
+                }
+                //usedIndexes is a list of unique int number in range(0, numberOfAllCards)
+                usedIndexes.Add(index);
+
+                //48 cards game
+                if (iterations == 48)
+                {
+                    //Initializing TableLayoutPanel with specific number of rows and columns for this type of game
+                    MakeTableLayoutPanel(4, 12, cardsTable);
+
+                    //Creating new picture box with hidden card image and name of source image in tag
+                    PictureBox card = new PictureBox
+                    {
+                        Name = CardsNames[usedIndexes[i]],
+                        Size = new Size(103, 153),
+                        Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\HideCard\hide.jpg"),
+                        SizeMode = PictureBoxSizeMode.StretchImage,
+                        Tag = FilesNames[usedIndexes[i]]
+                    };
+                    //Creating On_Click function to every card in the loop
+                    addClickFunction(card);
+                    //Adding PictureBox with specific On_Click function into CardsList
+                    Cardslist.Add(card);
+
+                }
+                //96 Cards game
+                if (iterations == 96)
+                {
+                    //Initializing TableLayoutPanel with specific number of rows and columns for this type of game
+                    MakeTableLayoutPanel(6, 16, cardsTable);
+
+                    //Creating new picture box with hidden card image and name of source image in tag
+                    PictureBox card = new PictureBox
+                    {
+                        Name = CardsNames[usedIndexes[i]],
+                        Size = new Size(75, 116),
+                        Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\HideCard\hide.jpg"),
+                        SizeMode = PictureBoxSizeMode.StretchImage,
+                        Tag = FilesNames[usedIndexes[i]]
+                    };
+                    addClickFunction(card);
+                    Cardslist.Add(card);
+                }
+                //120 Cards game
+                if (iterations == 120)
+                {
+                    //Initializing TableLayoutPanel with specific number of rows and columns for this type of game
+                    MakeTableLayoutPanel(6, 20, cardsTable);
+
+                    //Creating new picture box with hidden card image and name of source image in tag
+                    PictureBox card = new PictureBox
+                    {
+                        Name = CardsNames[usedIndexes[i]],
+                        Size = new Size(60, 92),
+                        Image = Image.FromFile(@"C:\Users\Piotr\source\repos\Memory\Memory\HideCard\hide.jpg"),
+                        SizeMode = PictureBoxSizeMode.StretchImage,
+                        Tag = FilesNames[usedIndexes[i]]
+                    };
+                    addClickFunction(card);
+                    Cardslist.Add(card);
+
+                }
+            }
+        }
+
         private void countScore(int gameTime, int tryCounter)
         {
             int initialScore = 1000000;

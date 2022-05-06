@@ -15,7 +15,7 @@ namespace Memory
     {
         //List where randomly chosen cards are stored
         List<PictureBox> Cardslist = new List<PictureBox>();
-        //List wich len is only 0, 1 or 2, it stores which cards user is checking right now
+        //List which len is only 0, 1 or 2, it stores which cards user is checking right now
         List<PictureBox> Clicekd = new List<PictureBox>();
 
         List<string> FilesNames = null;
@@ -48,7 +48,17 @@ namespace Memory
             fillingCardsList(iterations, usedIndexes, cardsTable, index);
 
             List<PictureBox> cardsToPlay = new List<PictureBox>();
+            
+            makeCardsToPlayList(usedIndexes, index, cardsToPlay, cardsTable);
 
+            showCards(cardsTable);
+
+
+        }
+
+        private void makeCardsToPlayList(List<int> usedIndexes, int index, List<PictureBox> cardsToPlay, TableLayoutPanel cardsTable)
+        {
+            Random random = new Random();
             foreach (PictureBox p in Cardslist)
             {
                 PictureBox card_2 = new PictureBox
@@ -77,10 +87,6 @@ namespace Memory
                 usedIndexes.Add(index);
                 cardsTable.Controls.Add(cardsToPlay[index]);
             }
-
-            showCards(cardsTable);
-
-
         }
 
         private void fillingCardsList(int iterations, List<int> usedIndexes, TableLayoutPanel cardsTable, int index)
