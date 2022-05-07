@@ -9,42 +9,81 @@ using System.Windows.Forms;
 
 namespace Memory
 {
-    internal class Game
+    public class Game
     {
-        private void makeCardsToPlayList(List<int> usedIndexes, int index, List<PictureBox> cardsToPlay, TableLayoutPanel cardsTable, List<PictureBox> Cardslist)
+        List<string> FilesNames = null;
+        List<string> CardsNames = null;
+        //List where randomly chosen cards are stored
+        List<PictureBox> Cardslist = new List<PictureBox>();
+        //List which len is only 0, 1 or 2, it stores which cards user is checking right now
+        List<PictureBox> Clicekd = new List<PictureBox>();
+        List<int> usedIndexes = new List<int>();
+        int gameTime;
+        int tryCounter;
+        bool clikckAllowed = false;
+        bool timeStopped = false;
+        Form3 form;
+
+        public Game(Form3 form_)
         {
-            Random random = new Random();
-            foreach (PictureBox p in Cardslist)
-            {
-                PictureBox card_2 = new PictureBox
-                {
-                    Name = p.Name + "2",
-                    Size = p.Size,
-                    Image = p.Image,
-                    SizeMode = p.SizeMode,
-                    Tag = p.Tag
-                };
-                addClickFunction(card_2);
-                cardsToPlay.Add(card_2);
-                cardsToPlay.Add(p);
-            }
-
-            usedIndexes.Clear();
-
-            index = random.Next(cardsToPlay.Count);
-
-            for (int i = 0; i < cardsToPlay.Count; i++)
-            {
-                while (usedIndexes.Contains(index))
-                {
-                    index = random.Next(cardsToPlay.Count);
-                }
-                usedIndexes.Add(index);
-                cardsTable.Controls.Add(cardsToPlay[index]);
-            }
+            form = form_;
         }
 
-        private void fillingCardsList(int iterations, List<int> usedIndexes, TableLayoutPanel cardsTable, int index)
+        public void start(Button button1, Label label2, TableLayoutPanel cardsTable, Timer timer1, Timer timer2, Label label1)
+        {
+            button1.Enabled = false;
+            label2.Visible = false;
+            int iterations = Settings.getInstance().getNumberOfCards();
+            getCardsAndFilesNames();
+            Random random = new Random();
+            int index = random.Next(60);
+            fillingCardsList(iterations, usedIndexes, cardsTable, index, timer1, timer2, label2, button1);
+            List<PictureBox> cardsToPlay = new List<PictureBox>();
+            makeCardsToPlayList(usedIndexes, index, cardsToPlay, cardsTable, timer1, timer2, label2, button1);
+            showCards(cardsTable, timer1, label1, button1);
+        }
+
+        private void getCardsAndFilesNames()
+        {
+            DirectoryInfo dir1 = new DirectoryInfo(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\");
+            FileInfo[] files = dir1.GetFiles("*.png", SearchOption.AllDirectories);
+
+            //Saving files names with .png extension into FilesNames list
+
+            if (FilesNames == null)
+            {
+                FilesNames = new List<string>();
+            }
+            else
+            {
+                FilesNames.Clear();
+            }
+
+            foreach (FileInfo f in files)
+            {
+                FilesNames.Add(f.Name);
+            }
+
+            //saving files names without .png extenxion but with _ at the end into CardsNames list
+
+            if (CardsNames == null)
+            {
+                CardsNames = new List<string>();
+            }
+            else
+            {
+                CardsNames.Clear();
+            }
+
+            foreach (string s in FilesNames)
+            {
+                string[] parts = s.Split('.');
+                CardsNames.Add(parts[0] + '_');
+            }
+
+        }
+
+        private void fillingCardsList(int iterations, List<int> usedIndexes, TableLayoutPanel cardsTable, int index, Timer timer1, Timer timer2, Label label2, Button button1)
         {
             Random random = new Random();
             //Filling CardsList 
@@ -74,7 +113,7 @@ namespace Memory
                         Tag = FilesNames[usedIndexes[i]]
                     };
                     //Creating On_Click function to every card in the loop
-                    addClickFunction(card);
+                    addClickFunction(card, timer1, timer2, label2, button1);
                     //Adding PictureBox with specific On_Click function into CardsList
                     Cardslist.Add(card);
 
@@ -94,7 +133,7 @@ namespace Memory
                         SizeMode = PictureBoxSizeMode.StretchImage,
                         Tag = FilesNames[usedIndexes[i]]
                     };
-                    addClickFunction(card);
+                    addClickFunction(card, timer1, timer2, label2, button1);
                     Cardslist.Add(card);
                 }
                 //120 Cards game
@@ -112,39 +151,29 @@ namespace Memory
                         SizeMode = PictureBoxSizeMode.StretchImage,
                         Tag = FilesNames[usedIndexes[i]]
                     };
-                    addClickFunction(card);
+                    addClickFunction(card, timer1, timer2, label2, button1);
                     Cardslist.Add(card);
 
                 }
             }
         }
 
-        private void countScore(int gameTime, int tryCounter)
+        private void MakeTableLayoutPanel(int rows, int cols, TableLayoutPanel tableLayoutPanel_)
         {
-            int initialScore = 1000000;
-            initialScore = initialScore - gameTime;
-            initialScore = initialScore - tryCounter;
-            Player.getInstance().setScore(initialScore);
-            TextWriter tsw = new StreamWriter(@"C:\Users\Piotr\source\repos\Memory\Memory\Rank.txt", true);
-            //Writing user score to the file.
-            tsw.WriteLine(Player.getInstance().getUsername() + ": " + Player.getInstance().getScore());
-            //Close the file.
-            tsw.Close();
+            tableLayoutPanel_.RowCount = rows;
+            tableLayoutPanel_.ColumnCount = cols;
+            tableLayoutPanel_.BackColor = Color.Transparent;
+            tableLayoutPanel_.AutoSize = true;
+            tableLayoutPanel_.Location = new Point(70, 70);
+
+            tableLayoutPanel_.RowStyles.Clear();
+            tableLayoutPanel_.ColumnStyles.Clear();
+
+            form.Controls.Add(tableLayoutPanel_);
+
         }
 
-        private bool checkWin(TableLayoutPanel tlp)
-        {
-            bool win = true;
-            foreach (PictureBox p in tlp.Controls)
-            {
-                if (p.Image != null)
-                {
-                    win = false;
-                }
-            }
-            return win;
-        }
-        private void addClickFunction(PictureBox card, bool clikckAllowed, List<PictureBox> Clicekd, Timer timer2, Label label2, Button button1, int tryCounter)
+        private void addClickFunction(PictureBox card, Timer timer1, Timer timer2, Label label2, Button button1)
         {
             card.Click += (s, e) =>
             {
@@ -223,6 +252,7 @@ namespace Memory
 
             };
         }
+
         private void turnOver(List<PictureBox> list)
         {
             foreach (PictureBox p in list)
@@ -231,7 +261,40 @@ namespace Memory
             }
         }
 
-        private void showCards(TableLayoutPanel tlp, Timer timer1, bool clikckAllowed, int gameTime, Button button1, Label label1, int tryCounter, Form3 this_)
+        private void makeCardsToPlayList(List<int> usedIndexes, int index, List<PictureBox> cardsToPlay, TableLayoutPanel cardsTable, Timer timer1, Timer timer2, Label label2, Button button1)
+        {
+            Random random = new Random();
+            foreach (PictureBox p in Cardslist)
+            {
+                PictureBox card_2 = new PictureBox
+                {
+                    Name = p.Name + "2",
+                    Size = p.Size,
+                    Image = p.Image,
+                    SizeMode = p.SizeMode,
+                    Tag = p.Tag
+                };
+                addClickFunction(card_2, timer1, timer2, label2, button1);
+                cardsToPlay.Add(card_2);
+                cardsToPlay.Add(p);
+            }
+
+            usedIndexes.Clear();
+
+            index = random.Next(cardsToPlay.Count);
+
+            for (int i = 0; i < cardsToPlay.Count; i++)
+            {
+                while (usedIndexes.Contains(index))
+                {
+                    index = random.Next(cardsToPlay.Count);
+                }
+                usedIndexes.Add(index);
+                cardsTable.Controls.Add(cardsToPlay[index]);
+            }
+        }
+
+        private void showCards(TableLayoutPanel tlp, Timer timer1, Label label1, Button button1)
         {
             foreach (PictureBox p in tlp.Controls)
             {
@@ -265,99 +328,57 @@ namespace Memory
                 if (checkWin(tlp))
                 {
                     timer1.Stop();
-                    countScore(gameTime, tryCounter);
-                    this_.Hide();
+                    countScore();
+                    form.Hide();
                     new Form4().ShowDialog();
-                    this_.Close();
+                    form.Close();
                 }
             };
         }
 
-
-        private List<PictureBox> MakeListOfRandomCards(List<PictureBox> list, int iterations)
+        private bool checkWin(TableLayoutPanel tlp)
         {
-            List<PictureBox> cards = new List<PictureBox>();
-            List<int> usedIndexes = new List<int>();
-            Random random = new Random();
-            int index = random.Next(list.Count);
-
-            for (int i = 0; i < iterations / 2; i++)
+            bool win = true;
+            foreach (PictureBox p in tlp.Controls)
             {
-                while (!usedIndexes.Contains(index))
+                if (p.Image != null)
                 {
-                    index = random.Next(list.Count);
+                    win = false;
                 }
-                cards.Add(list[index]);
-                usedIndexes.Add(index);
             }
-            return cards;
+            return win;
         }
 
-        private void MakeTableLayoutPanel(int rows, int cols, TableLayoutPanel tableLayoutPanel_, Form3 this_)
+        private void countScore()
         {
-            tableLayoutPanel_.RowCount = rows;
-            tableLayoutPanel_.ColumnCount = cols;
-            tableLayoutPanel_.BackColor = Color.Transparent;
-            tableLayoutPanel_.AutoSize = true;
-            tableLayoutPanel_.Location = new Point(70, 70);
-
-            tableLayoutPanel_.RowStyles.Clear();
-            tableLayoutPanel_.ColumnStyles.Clear();
-
-            this_.Controls.Add(tableLayoutPanel_);
-
+            int initialScore = 1000000;
+            initialScore = initialScore - gameTime;
+            initialScore = initialScore - tryCounter;
+            Player.getInstance().setScore(initialScore);
+            TextWriter tsw = new StreamWriter(@"C:\Users\Piotr\source\repos\Memory\Memory\Rank.txt", true);
+            //Writing user score to the file.
+            tsw.WriteLine(Player.getInstance().getUsername() + ": " + Player.getInstance().getScore());
+            //Close the file.
+            tsw.Close();
         }
 
-
-
-        private void getCardsAndFilesNames(List<string> FilesNames, List<string> CardsNames)
+        public void handleButton(Timer timer1, Button button1)
         {
-            DirectoryInfo dir1 = new DirectoryInfo(@"C:\Users\Piotr\source\repos\Memory\Memory\Cards\");
-            FileInfo[] files = dir1.GetFiles("*.png", SearchOption.AllDirectories);
-
-            //Saving files names with .png extension into FilesNames list
-
-            if (FilesNames == null)
+            if (button1.Text == "Time stop")
             {
-                FilesNames = new List<string>();
+                timer1.Stop();
+                timeStopped = true;
+                clikckAllowed = false;
+                button1.Text = "Time start";
             }
             else
             {
-                FilesNames.Clear();
-            }
-
-            foreach (FileInfo f in files)
-            {
-                FilesNames.Add(f.Name);
-            }
-
-            //saving files names without .png extenxion but with _ at the end into CardsNames list
-
-            if (CardsNames == null)
-            {
-                CardsNames = new List<string>();
-            }
-            else
-            {
-                CardsNames.Clear();
-            }
-
-            foreach (string s in FilesNames)
-            {
-                string[] parts = s.Split('.');
-                CardsNames.Add(parts[0] + '_');
-            }
-
-
-        }
-
-        //Adding PictureBoxes to Controls
-        private void drawCards(Form3 this_, List<PictureBox> Cardslist)
-        {
-            foreach (PictureBox picture in Cardslist)
-            {
-                this_.Controls.Add(picture);
+                timer1.Start();
+                timeStopped = false;
+                clikckAllowed = true;
+                button1.Text = "Time stop";
             }
         }
+
     }
 }
